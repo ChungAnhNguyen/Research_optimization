@@ -1,0 +1,68 @@
+## LIPN:: /usr/local/nfs/lipn/software/cplex121
+
+# ____________________________________________  environnement Cplex
+
+# Répertoires
+SYSTEM     = x86-64_osx
+LIBFORMAT  = static_pic
+CPLEXDIR   = /Applications/CPLEX_Studio201/cplex
+
+# Compilation
+CC  = clang
+
+CCOPT = -m64 -fPIC -fexceptions -DNDEBUG -stdlib=libc++
+COPT  = -m64 -fPIC
+
+CPLEXBINDIR   = $(CPLEXDIR)/bin/$(BINDIST)
+CPLEXLIBDIR   = $(CPLEXDIR)/lib/$(SYSTEM)/$(LIBFORMAT)
+
+# For dynamic linking
+CPLEXBINDIR   = $(CPLEXDIR)/bin/$(SYSTEM)
+CPLEXLIB      = cplex$(dynamic:yes=2010)
+run           = $(dynamic:yes=DYLD_LIBRARY_PATH=$(CPLEXBINDIR))
+
+CLNDIRS   = -L$(CPLEXLIBDIR) $(dynamic:yes=-L$(CPLEXBINDIR))
+CLNFLAGS  = -l$(CPLEXLIB) -m64 -lm -lpthread -framework CoreFoundation -framework IOKit
+
+CPLEXINCDIR   = $(CPLEXDIR)/include
+
+CFLAGS  = $(COPT)  -I$(CPLEXINCDIR)
+
+# ____________________________________________ executables
+# $@ 	la cible
+# $< 	la premiere dependance
+# $^ 	toutes les dependances
+# $*		le nom du fichier sans le suffixe
+all: tableaux-prog
+obj: tableaux-prog.o tableaux.o reg.o rgd.o vn.o
+
+tableaux-prog: tableaux-prog.o tableaux.o rgd.o reg.o vn.o
+	$(CC) $(CFLAGS) $(CLNDIRS) -o $@ $^ $(CLNFLAGS)
+
+tableaux-prog.o: tableaux-prog.c tableaux.h vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+tableaux.o: tableaux.c tableaux.h vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+rgd.o: rgd.c tableaux.h vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+reg.o: reg.c tableaux.h vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+vn.o: vn.c vn.h
+	$(CC) -c -Wall $< -o $@
+
+# ____________________________________________ nettoyage
+clean:
+	rm -rf *.o tableaux-prog vn-test
+
+# ____________________________________________ programmes de test
+test: vn-test
+
+vn-test: vn-test.o vn.o
+	$(CC) -o $@ $^ -lm
+
+vn-test.o: vn-test.c vn.h
+	$(CC) -c -Wall $< -o $@

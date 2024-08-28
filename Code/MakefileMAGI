@@ -1,0 +1,57 @@
+# ____________________________________________  environnement Cplex
+
+# ____ Répertoires
+SYSTEM     = x86-64_linux
+LIBFORMAT  = static_pic
+CPLEXDIR   = /nfs/softs-buster/ibm/ILOG/CPLEX_Studio201/cplex
+
+# ____ Compilation
+CC  = gcc
+COPT = -m64 -fPIC
+CPLEXINCDIR   = $(CPLEXDIR)/include
+CFLAGS  = $(COPT)  -I$(CPLEXINCDIR)
+
+# ____ Edition de liens
+CPLEXBINDIR   = $(CPLEXDIR)/bin/$(BINDIST)
+CPLEXLIBDIR   = $(CPLEXDIR)/lib/$(SYSTEM)/$(LIBFORMAT)
+
+# For dynamic linking
+CPLEXBINDIR   = $(CPLEXDIR)/bin/$(SYSTEM)
+CPLEXLIB      = cplex$(dynamic:yes=2010)
+run           = $(dynamic:yes=LD_LIBRARY_PATH=$(CPLEXBINDIR))
+
+CLNDIRS   = -L$(CPLEXLIBDIR) $(dynamic:yes=-L$(CPLEXBINDIR))
+CLNFLAGS  = -l$(CPLEXLIB) -lm -lpthread -ldl
+
+# ____________________________________________ executables
+# $@    la cible
+# $<    la premiere dependance
+# $^    toutes les dependances
+# $*            le nom du fichier sans le suffixe
+all: tableaux-prog
+obj: tableaux-prog.o tableaux.o reg.o rgd.o vn.o
+
+reg-prog: reg-prog.o tableaux.o tabreg.o vn.o
+	$(CC) $(CFLAGS) $(CLNDIRS) -o $@ $^ $(CLNFLAGS)
+
+tableaux-prog: tableaux-prog.o tableaux.o rgd.o reg.o vn.o
+	$(CC) $(CFLAGS) $(CLNDIRS) -o $@ $^ $(CLNFLAGS)
+
+tableaux-prog.o: tableaux-prog.c tableaux.h vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+tableaux.o: tableaux.c tableaux.h vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+rgd.o: rgd.c tableaux.h vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+reg.o: reg.c tableaux.h vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+vn.o: vn.c vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+# ____________________________________________ nettoyage
+clean:
+	rm -rf *.o tableaux-prog

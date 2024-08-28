@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combinatorial Designs for CSPs</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Adding text file -->
+    <script>
+        function uploadFile(tableId, rowIndex) {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const contents = e.target.result;
+                    displayFileContents(contents, tableId, rowIndex);
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function displayFileContents(contents, tableId, rowIndex) {
+            const table = document.getElementById(tableId);
+            const row = table.rows[rowIndex];
+            const cell = row.cells[1];  // Assuming the text should go into the second cell
+            cell.colSpan = row.cells.length - 1; // Make the cell span across all columns
+            cell.textContent = contents;
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Header section -->
+    <header>
+        <h1>Combinatorial Designs pour CSPs</h1>
+        <nav>
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#differential-approximation">Differential Approximation</a></li>
+                <li><a href="#orthogonal-tables">Orthogonal Tables</a></li>
+                <li><a href="#references">References</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content section -->
+    <main>
+        <!-- Introduction section -->
+        <!-- <section id="introduction">
+            <p>Designs combinatoires pour l’analyse des problèmes de satisfaction de contraintes, CSP généralisés</p>
+        </section> -->
+
+        <!-- Instance of k CSP-q section -->
+        <!-- <section id="instance">
+            <h2>Instance of k CSP-q</h2>
+            <h4>Problem Definition</h4>
+            <p>On an alphabet \(\Sigma_q = \{0, ..., q-1\}\), solve a problem of the type:</p>
+            <pre><code>
+                \[
+                \text{OPT} = \max_{x=(x_1,...,x_n) \in \Sigma^n_q} \sum_{i=1}^m w_i \times P_i(x_{i1}, ..., x_{i\kappa_i})
+                \]
+            </code></pre>
+            <h4>Example</h4>
+            <p>Example problem for \(q = 3\) and \(k = 2\):</p>
+            <pre><code >
+                \[
+                \max_{x_1,...,x_{10} \in \Sigma_3} \left(2x_1 + x_4 \equiv 1 \mod 3\right) - \left(x_1 + x_7 \equiv 0 \mod 3\right)
+                + 3\left(x_1 - x_5 \equiv 2 \mod 3\right) + \left(x_4 = x_5\right) + \left(x_4 = x_7\right)
+                + 2\left(x_5 \neq x_7\right) + \left\lfloor \frac{x_2 + x_8}{2} \right\rfloor + \min\{x_3, x_{10}\} - \left(\frac{3x_5x_9}{7}\right)
+                \]
+            </code></pre>
+        </section> -->
+
+        <!-- Differential Approximation section -->
+        <!-- <section id="differential-approximation">
+            <h2>Differential Approximation</h2>
+            <h4>Quality Measure</h4>
+            <p>Measure the quality of an approximate solution by the ratio \(\frac{\text{APX} - \text{WOR}}{\text{OPT} -
+                \text{WOR}}\) where:</p>
+            <ul>
+                <li>APX: value of an approximate solution</li>
+                <li>OPT: value of an optimal solution</li>
+                <li>WOR: value of a worst solution</li>
+            </ul>
+            <p>An algorithm is \(\rho\)-approximated if it computes polynomial-time solutions with a ratio \(\geq
+                \rho\).</p>
+        </section> -->
+
+        <!-- <section>
+            <p>Evaluate the average differential ratio \(\frac{\text{AVG} - \text{WOR}}{\text{OPT} - \text{WOR}}\) where
+                AVG is the average value of solutions.</p>
+        </section> -->
+        <!-- Orthogonal Tables section -->
+
+        <section>
+            <p><b>Il s’agit d’évaluer le rapport</b> \(\frac{\text{AVG} - \text{WOR}}{\text{OPT} - \text{WOR}}\) où
+                \(\text{AVG}\) <b>désigne la valeur moyenne des solutions sur</b> \(\Sigma_n^{q*}\).</p>
+        </section>
+
+        <section id="orthogonal-tables">
+            <h2>Orthogonal Tables</h2>
+            <h3>Definition</h3>
+            <p>Tableux Orthogonaux \(OA(R, \nu, q, k)\) are matrices with \(R\) rows and \(\nu\) columns with entries in
+                \(\Sigma_q\).</p>
+            <li>tableau \(M\) de \(R\) lignes et \(v\) colonnes à coefficients dans \(\Sigma_q\)</li>
+            <li>\(∀k\) colonnes qu’on en extrait, on retrouve \( \frac{R}{q^k} \) copies de \( \Sigma_k^q \).</li>
+            <li>On suppose que la ligne \( (0, \ldots, 0) \) apparaît \( R^* \) fois.</li>
+            <h3>Lien avec \(k\) \(CSP-q\)</h3>
+            <li>Si l’on peut partitionner les variables en \(\nu\) ensembles \(V_1, \ldots, V_\nu\) de sorte à séparer
+                les variables sur lesquelles est évaluée une même fonction \(\Pi\), alors le rapport différentiel moyen
+                est \(\geq \frac{R^*}{R}\).</li>
+            <li><b>Argument</b> : on interprète les coefficients \(M_{r,c}\) de \(M\) comme des décalages à appliquer
+                aux composantes \(x_j\), \(j \in V_c\) d’une solution \(x\).</li>
+            <h3>Conséquence</h3>
+            <ul>
+                <li>
+                    Minorants pour le rapport différentiel moyen selon \(q\), \(k\) (déduits de tableaux de la
+                    littérature, voir par ex. <b>[HSS99]</b>):
+                    <table id="consequence">
+                        <thead>
+                            <tr>
+                                <th>\(k = 2\)</th>
+                                <th>\(q = 2 \land k = 3\)</th>
+                                <th>\(q = 2 \land k \geq 4\)</th>
+                                <th>\(q, k \geq 3\)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>\(\frac{1}{\nu(q - 1)}\)</td>
+                                <td>\(\frac{1}{2\nu}\)</td>
+                                <td>\(\frac{1}{2 \lceil k/2 \rceil \nu \lfloor k/2 \rfloor}\)</td>
+                                <td>\(\frac{1}{q} \times \frac{1}{(q\nu)^{k - \lceil \log_q k \rceil}}\)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+                <li>Questions inédites posées sur les tableaux orthogonaux <b>[CSV19]</b></li>
+            </ul>
+        </section>
+
+        <!-- Table section -->
+
+        <section id="table_section">
+            <h2>Les Tableaux en form RHO_E et RHO</h2>
+            <h3>rho_E</h3>
+
+            <section class="n=2">
+                <ul>
+                    <li>
+                        <h4>rho_E(n,2,2)</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>n</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th>6</th>
+                                    <th>7</th>
+                                    <th>8</th>
+                                    <th>9</th>
+                                    <th>10</th>
+                                    <th>11</th>
+                                    <th>12</th>
+                                    <th>13</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>int.</td>
+                                    <td>1/2</td>
+                                    <td>1/4</td>
+                                    <td>1/4</td>
+                                    <td>2/12</td>
+                                    <td>2/12</td>
+                                    <td>1/8</td>
+                                    <td>1/8</td>
+                                    <td>2/20</td>
+                                    <td>2/20</td>
+                                    <td>1/12</td>
+                                    <td>1/12</td>
+                                    <td>2/28</td>
+                                </tr>
+                                <tr>
+                                    <td>min R</td>
+                                    <td>1/2</td>
+                                    <td>1/4</td>
+                                    <td>1/4</td>
+                                    <td>1/8</td>
+                                    <td>1/8</td>
+                                    <td>1/8</td>
+                                    <td>1/8</td>
+                                    <td>1/12</td>
+                                    <td>1/12</td>
+                                    <td>1/12</td>
+                                    <td>1/12</td>
+                                    <td>1/16</td>
+                                </tr>
+                                <tr>
+                                    <td>bin.</td>
+                                    <td>2</td>
+                                    <td>4</td>
+                                    <td>4</td>
+                                    <td>8</td>
+                                    <td>8</td>
+                                    <td>8</td>
+                                    <td>8</td>
+                                    <td>12</td>
+                                    <td>12</td>
+                                    <td>12</td>
+                                    <td>12</td>
+                                    <td>16</td>
+                                </tr>
+                                <tr>
+                                    <td>text file</td>
+                                    <td><a href="text_file/1-rho_E-2-2-2.txt" target="_blank">view</a></td>
+                                    <td><a href="text_file/1-rho_E-3-2-2.txt" target="_blank">view</a></td>
+                                    <td><a href="text_file/1-rho_E-4-2-2.txt" target="_blank">view</a></td>
+                                    <td><a href="text_file/1-rho_E-5-2-2.txt" target="_blank">view</a></td>
+                                    <td><a href="text_file/1-rho_E-6-2-2.txt" target="_blank">view</a></td>
+                                    <td><a href="text_file/1-rho_E-7-2-2.txt" target="_blank">view</a></td>
+                                    <td><a href="text_file/1-rho_E-8-2-2.txt" target="_blank">view</a></td>
+                                    <td><a href="text_file/1-rho_E-9-2-2.txt" target="_blank">view</a></td>
+                                    <td><a href="text_file/1-rho_E-10-2-2.txt" target="_blank">view</a></td>
+                                    <td><a href="text_file/1-rho_E-11-2-2.txt" target="_blank">view</a></td>
+                                    <td><a href="text_file/1-rho_E-12-2-2.txt" target="_blank">view</a></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <h4>rho_E(n,2,4)</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>n</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th>6</th>
+                                    <th>7</th>
+                                    <th>8</th>
+                                    <th>9</th>
+                                    <th>10</th>
+                                    <th>11</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>int.</td>
+                                    <td>1/8</td>
+                                    <td>1/16</td>
+                                    <td>1/16</td>
+                                    <td>3/80</td>
+                                    <td>4/144</td>
+                                    <td>6/240</td>
+                                    <td>6/336</td>
+                                    <td>6/366</td>
+                                </tr>
+                                <tr>
+                                    <td>min R</td>
+                                    <td>8</td>
+                                    <td>16</td>
+                                    <td>16</td>
+                                    <td>32</td>
+                                    <td>64</td>
+                                    <td>64</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>bin.</td>
+                                    <td>8</td>
+                                    <td>16</td>
+                                    <td>16</td>
+                                    <td>32</td>
+                                    <td>64</td>
+                                    <td>64</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>text file</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <h4>rho_E(n,2,6)</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>n</th>
+                                    <th>6</th>
+                                    <th>7</th>
+                                    <th>8</th>
+                                    <th>9</th>
+                                    <th>10</th>
+                                    <th>11</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>int.</td>
+                                    <td>1/32</td>
+                                    <td>1/64</td>
+                                    <td>1/64</td>
+                                    <td>4/448</td>
+                                    <td>6/960</td>
+                                    <td>25/5184</td>
+                                </tr>
+                                <tr>
+                                    <td>min R</td>
+                                    <td>32</td>
+                                    <td>64</td>
+                                    <td>64</td>
+                                    <td>128</td>
+                                    <td>256</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>bin.</td>
+                                    <td>32</td>
+                                    <td>64</td>
+                                    <td>64</td>
+                                    <td>128</td>
+                                    <td>256</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>text file</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                    <!-- <li>
+                        <h4>rho_E(n,2,2)</h4>
+                    </li> -->
+                </ul>
+            </section>
+
+            <section class="n=3">
+                <li>
+                    <h4>rho_E(n,3,2)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                                <th>7</th>
+                                <th>8</th>
+                                <th>9</th>
+                                <th>10</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/3</td>
+                                <td>1/3</td>
+                                <td>3/15</td>
+                                <td>1/6</td>
+                                <td>1/6</td>
+                                <td>3/24</td>
+                                <td>1/9</td>
+                                <td>1/9</td>
+                                <td>3/33</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>3/1</td>
+                                <td>3/1</td>
+                                <td>6/1</td>
+                                <td>6/1</td>
+                                <td>6/1</td>
+                                <td>9/1</td>
+                                <td>9/1</td>
+                                <td>9/1</td>
+                                <td>12/1</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>3</td>
+                                <td>3</td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>12</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </li>
+                <li>
+                    <h4>rho_E(n,3,3)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                                <th>7</th>
+                                <th>8</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/9</td>
+                                <td>1/9</td>
+                                <td>2/27</td>
+                                <td>2/27</td>
+                                <td>8/162</td>
+                                <td>8/162</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>9/1</td>
+                                <td>9/1</td>
+                                <td>18/1</td>
+                                <td>27/2</td>
+                                <td>27/1</td>
+                                <td>27/1</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>18</td>
+                                <td>27</td>
+                                <td>27</td>
+                                <td>27</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><a href="text_file/1-rho_E-8-3-3.txt" target="_blank">view</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </li>
+                <li>
+                    <h4>rho_E(n,3,4)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                                <th>7</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/27</td>
+                                <td>1/27</td>
+                                <td>7/297</td>
+                                <td>5/243</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>27/1</td>
+                                <td>27/1</td>
+                                <td>81/1</td>
+                                <td>81/1</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>27</td>
+                                <td>27</td>
+                                <td>81</td>
+                                <td>81</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+                <li>
+                    <h4>rho_E(n,3,5)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>5</th>
+                                <th>6</th>
+                                <th>7</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/81</td>
+                                <td>1/81</td>
+                                <td>27/3240</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>81/1</td>
+                                <td>81/1</td>
+                                <td>243/1</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>81</td>
+                                <td>81</td>
+                                <td>243</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </section>
+            <!-- <section class="n=4">
+                <li>
+                    <h4>rho_E(n,4,2)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                                <th>7</th>
+                                <th>8</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/4</td>
+                                <td>2/8</td>
+                                <td>2/8</td>
+                                <td>4/24</td>
+                                <td>14/104</td>
+                                <td>2/16</td>
+                                <td>2/16</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>4/1</td>
+                                <td>8/2</td>
+                                <td>8/2</td>
+                                <td>16/2</td>
+                                <td>16/2</td>
+                                <td>16/2</td>
+                                <td>16/2</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>4</td>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>16</td>
+                                <td>16</td>
+                                <td>16</td>
+                                <td>16</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </li>
+                <li>
+                    <h4>rho_E(n,4,3)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/16</td>
+                                <td>1/16</td>
+                                <td>1/16</td>
+                                <td>1/16</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>16/1</td>
+                                <td>16/1</td>
+                                <td>32/2</td>
+                                <td>32/2</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>16</td>
+                                <td>16</td>
+                                <td>32</td>
+                                <td>32</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+                <li>
+                    <h4>rho_E(n,4,4)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>5</th>
+                                <th>6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/64</td>
+                                <td>2/128</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>64/1</td>
+                                <td>128/2</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>64</td>
+                                <td>128</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </section>
+
+            <section class="n=5">
+                <li>
+                    <h4>rho_E(n,5,2)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/5</td>
+                                <td>1/5</td>
+                                <td>1/5</td>
+                                <td>1/5</td>
+                                <td>5/35</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>5/1</td>
+                                <td>5/1</td>
+                                <td>5/1</td>
+                                <td>5/1</td>
+                                <td>10/1</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>10</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+                <li>
+                    <h4>rho_E(n,5,3)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/25</td>
+                                <td>1/25</td>
+                                <td>1/25</td>
+                                <td>1/25</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>25/1</td>
+                                <td>25/1</td>
+                                <td>25/1</td>
+                                <td>25/1</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>25</td>
+                                <td></td>
+                                <td>25</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+                <li>
+                    <h4>rho_E(n,5,4)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/125</td>
+                                <td>1/125</td>
+                                <td>1/125</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>125/1</td>
+                                <td>125/1</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>125</td>
+                                <td></td>
+                                <td>125</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </section>
+
+            <section class="n=6">
+                <li>
+                    <h4>rho_E(n,6,2)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/6</td>
+                                <td>2/12</td>
+                                <td>2/12</td>
+                                <td>3/24</td>
+                                <td>3/24</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>6/1</td>
+                                <td>12/2</td>
+                                <td>12/2</td>
+                                <td>12/1</td>
+                                <td>12/1</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>6</td>
+                                <td>12</td>
+                                <td>12</td>
+                                <td>12</td>
+                                <td>12</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </section> -->
+
+
+            <h3>rho</h3>
+            <section>
+                <li>
+                    <h4>rho(n,2,2)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                                <th>7</th>
+                                <th>8</th>
+                                <th>9</th>
+                                <th>10</th>
+                                <th>11</th>
+                                <th>12</th>
+                                <th>13</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/2</td>
+                                <td>1/4</td>
+                                <td>1/4</td>
+                                <td>2/12</td>
+                                <td>2/12</td>
+                                <td>1/8</td>
+                                <td>1/8</td>
+                                <td>2/20</td>
+                                <td>2/20</td>
+                                <td>1/12</td>
+                                <td>1/12</td>
+                                <td>2/28</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>2/1</td>
+                                <td>4/1</td>
+                                <td>4/1</td>
+                                <td>8/1</td>
+                                <td>8/1</td>
+                                <td>8/1</td>
+                                <td>8/1</td>
+                                <td>12/1</td>
+                                <td>12/1</td>
+                                <td>12/1</td>
+                                <td>12/1</td>
+                                <td>16/1</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>2</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>12</td>
+                                <td>12</td>
+                                <td>12</td>
+                                <td>12</td>
+                                <td>16</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td>view</td>
+                                <td>view</td>
+                                <td>view</td>
+                                <td>view</td>
+                                <td><a href="text_file/1-rho-5-2-2.txt" target="_blank">view</a></td>
+                                <td>view</td>
+                                <td>view</td>
+                                <td>view</td>
+                                <td><a href="text_file/1-rho-10-2-2.txt" target="_blank">view</a></td>
+                                <td><a href="text_file/1-rho-11-2-2.txt" target="_blank">view</a></td>
+                                <td><a href="text_file/1-rho-12-2-2.txt" target="_blank">view</a></td>
+                                <td><a href="text_file/1-rho-13-2-2.txt" target="_blank">view</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </li>
+                <li>
+                    <h4>rho(n,3,2)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                                <th>7</th>
+                                <th>8</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/9</td>
+                                <td>1/9</td>
+                                <td>1/9</td>
+                                <td>2/27</td>
+                                <td>3/45</td>
+                                <td>3/45</td>
+                                <td>7/135</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>9/1</td>
+                                <td>9/1</td>
+                                <td>9/1</td>
+                                <td>18/1</td>
+                                <td>18/1</td>
+                                <td>18/1</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>18</td>
+                                <td>18</td>
+                                <td>18</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><a href="text_file/1-rho-5-3-2.txt" target="_blank">view</a></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+                <li>
+                    <h4>rho(n,3,3)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/27</td>
+                                <td>1/27</td>
+                                <td>2/54</td>
+                                <td>2/81</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>27/1</td>
+                                <td>27/1</td>
+                                <td>54/2</td>
+                                <td>81/2</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>27</td>
+                                <td>27</td>
+                                <td>54</td>
+                                <td>81</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+                <li>
+                    <h4>rho(n,3,4)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>int.</td>
+                                <td>1/81</td>
+                                <td>1/81</td>
+                                <td>4/324</td>
+                            </tr>
+                            <tr>
+                                <td>min R</td>
+                                <td>81/1</td>
+                                <td>81/1</td>
+                                <td>243/2</td>
+                            </tr>
+                            <tr>
+                                <td>bin.</td>
+                                <td>81</td>
+                                <td>81</td>
+                                <td>243</td>
+                            </tr>
+                            <tr>
+                                <td>text file</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </section>
+
+            <!-- <section>
+                <li>
+                    <h4>rho(n,4,2)</h4>
+                </li>
+                <li>
+                    <h4>rho(n,4,3)</h4>
+                </li>
+                <li>
+                    <h4>rho(n,4,4)</h4>
+                </li>
+            </section>
+
+            <section>
+                <li>
+                    <h4>rho(n,5,2)</h4>
+                </li>
+                <li>
+                    <h4>rho(n,5,3)</h4>
+                </li>
+                <li>
+                    <h4>rho(n,5,4)</h4>
+                </li>
+            </section>
+
+            <section>
+                <li>
+                    <h4>rho(n,6,2)</h4>
+                </li>
+            </section> -->
+        </section>
+
+        <!-- References section -->
+        <section id="references">
+            <h2>References</h2>
+            <ul>
+                <li>C. J. Colbourn, D. R. Stinson, S. Veitch. "Constructions of optimal orthogonal arrays with repeated
+                    rows." Discrete Mathematics, 2019.</li>
+                <li>J.-F. Culus, S. Toulouse. "2CSPs All Are Approximable Within a Constant Differential Factor." ISCO
+                    2018.</li>
+                <li>J.-F. Culus, S. Toulouse. "How Far From a Worst Solution a Random Solution of a k CSP Instance Can
+                    Be?" IWOCA 2018.</li>
+                <li>A.S. Hedayat, N. J. A. Sloane, J. Stufken. "Orthogonal Arrays: Theory and Applications." Springer,
+                    1999.</li>
+                <li>Y. Nesterov. "Semidefinite relaxation and nonconvex quadratic optimization." Optimization Methods
+                    and Software, 1998.</li>
+            </ul>
+        </section>
+    </main>
+
+    <!-- Footer section -->
+    <footer>
+        <p>&copy; 2024 Laborator. All rights reserved.</p>
+    </footer>
+
+    <!-- Add your JavaScript file link here -->
+    <script src="script.js"></script>
+</body>
+
+</html>

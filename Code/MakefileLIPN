@@ -1,0 +1,65 @@
+# Répertoires
+SYSTEM     = x64_win64
+LIBFORMAT  = static_pic
+
+CPLEXDIR      = /mnt/c/Program Files/IBM/ILOG/CPLEX_Studio2211/cplex
+CONCERTDIR    = /mnt/c/Program Files/IBM/ILOG/CPLEX_Studio2211/concert
+
+
+# Compilation
+CCC = g++
+CC  = gcc
+CCOPT = -O -fPIC -fexceptions -DNDEBUG -DIL_STD
+COPT  = -fPIC
+
+CPLEXBINDIR   = $(CPLEXDIR)/bin/$(SYSTEM)
+CPLEXLIBDIR   = $(CPLEXDIR)/lib/$(SYSTEM)/$(LIBFORMAT)
+CONCERTLIBDIR = $(CONCERTDIR)/lib/$(SYSTEM)/$(LIBFORMAT)
+
+CCLNFLAGS = -L$(CPLEXLIBDIR) -lilocplex -lcplex -L$(CONCERTLIBDIR) -lconcert -lm -pthread
+CLNFLAGS  = -L$(CPLEXLIBDIR) -lcplex -lm -pthread
+
+CONCERTINCDIR = $(CONCERTDIR)/include
+CPLEXINCDIR   = $(CPLEXDIR)/include
+
+CFLAGS  = $(COPT)  -I$(CPLEXINCDIR)
+CCFLAGS = $(CCOPT) -I$(CPLEXINCDIR) -I$(CONCERTINCDIR)
+
+# ____________________________________________ executables
+# $@ \tla cible
+# $< \tla premiere dependance
+# $^ \ttoutes les dependances
+# $*\t\tle nom du fichier sans le suffixe
+all: tableaux-prog
+obj: tableaux-prog.o tableaux.o reg.o rgd.o vn.o
+
+tableaux-prog: tableaux-prog.o tableaux.o rgd.o reg.o vn.o-
+	$(CC) $(CFLAGS) $(CLNDIRS) -o $@ $^ $(CLNFLAGS)
+
+tableaux-prog.o: tableaux-prog.c tableaux.h vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+tableaux.o: tableaux.c tableaux.h vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+rgd.o: rgd.c tableaux.h vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+reg.o: reg.c tableaux.h vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+vn.o: vn.c vn.h
+	$(CC) -c -Wall $(CFLAGS) $< -o $@
+
+# ____________________________________________ nettoyage
+clean:
+	rm -rf *.o tableaux-prog vn-test
+
+# ____________________________________________ programmes de test
+test: vn-test
+
+vn-test: vn-test.o vn.o
+	$(CC) -o $@ $^ -lm
+
+vn-test.o: vn-test.c vn.h
+	$(CC) -c -Wall $< -o $@
